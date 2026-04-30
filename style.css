@@ -443,20 +443,23 @@ body {
 .post-card {
     position: relative;
     /* Esto es lo más importante: ancho y alto proporcionales */
-    aspect-ratio: 1 / 1; 
-    
-    padding: 32px 20px 16px; /* Más aire arriba para la cinta */
+    aspect-ratio: 1 / 1;
+
+    padding: 32px 20px 16px;
+    /* Más aire arriba para la cinta */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Empuja el footer al fondo */
+    justify-content: space-between;
+    /* Empuja el footer al fondo */
     cursor: pointer;
     box-shadow: var(--note-shadow);
     transition: transform .25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow .2s ease;
-    
+
     /* Bordes irregulares sutiles (Diseño Industrial touch) */
     border-radius: 2px;
-    border: 1px solid rgba(0,0,0,0.03);
-    overflow: hidden; /* Para que nada se salga del cuadrado */
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    /* Para que nada se salga del cuadrado */
 }
 
 /* tape */
@@ -1369,18 +1372,59 @@ body {
 
 /* Esto arreglará la posición y el tamaño */
 .nav__logo-container {
-  display: flex;
-  align-items: center;
-  height: 40px; 
-  text-decoration: none;
-  /* ESTA ES LA LÍNEA CLAVE: */
-  margin-right: auto; 
+    display: flex;
+    align-items: center;
+    height: 40px;
+    text-decoration: none;
+    /* ESTA ES LA LÍNEA CLAVE: */
+    margin-right: auto;
 }
 
 .nav__logo {
-  height: 100%;
-  width: auto;
-  object-fit: contain;
-  /* Si sientes que el logo está muy pegado al menú hamburguesa: */
-  margin-left: 8px; 
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    /* Si sientes que el logo está muy pegado al menú hamburguesa: */
+    margin-left: 8px;
+}
+
+/* Estilos para el botón de publicar en Móvil */
+@media (max-width: 768px) {
+    .nav__cta {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999;
+        /* Para que esté por encima de todo */
+
+        /* Convertirlo en un círculo */
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        /* Sombra elegante (estilo Material Design 3) */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Ocultamos el texto "Publicar" para que solo quede el icono + */
+    .nav__cta .btn-text {
+        display: none;
+    }
+
+    /* Agrandamos un poco el icono para que se vea bien en el círculo */
+    .nav__cta .material-symbols-outlined {
+        margin: 0;
+        font-size: 30px;
+    }
+}
+
+/* En escritorio volvemos a la normalidad */
+@media (min-width: 769px) {
+    .nav__cta .btn-text {
+        display: inline;
+    }
 }

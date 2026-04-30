@@ -414,11 +414,17 @@ function navigationHandler(e) {
 }
 function showPage(id, navEl) {
   state.currentPage = id;
+
+  const publishBtn = document.querySelector('.nav__cta');
+  if (id === 'publicar') {
+    publishBtn.style.display = 'none';
+  } else {
+    publishBtn.style.display = 'flex';
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('page--active'));
   document.getElementById('page-' + id).classList.add('page--active');
-  document.querySelectorAll('.nav__link').forEach(l => l.classList.remove('nav__link--active'));
-  if (navEl && navEl.classList) navEl.classList.add('nav__link--active');
-  window.scrollTo(0, 0);
+  // ... resto del código ...
 }
 
 /* ══ TOAST ══ */
