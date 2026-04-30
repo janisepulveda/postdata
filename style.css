@@ -1366,3 +1366,21 @@ body {
     background: var(--border);
     border-radius: 2px;
 }
+
+/* Esto arreglará la posición y el tamaño */
+.nav__logo-container {
+  display: flex;
+  align-items: center;
+  height: 40px; 
+  text-decoration: none;
+  /* ESTA ES LA LÍNEA CLAVE: */
+  margin-right: auto; 
+}
+
+.nav__logo {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  /* Si sientes que el logo está muy pegado al menú hamburguesa: */
+  margin-left: 8px; 
+}
