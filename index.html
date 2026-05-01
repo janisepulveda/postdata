@@ -251,6 +251,32 @@
 
   <div class="toast" id="toast"></div>
   <script src="script.js"></script>
+
+  <!-- 1. Cargar el núcleo de Firebase (Versión compatible) -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<!-- 2. Cargar la base de datos Realtime -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+<!-- 3. Configurar tu conexión -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDFnR0IDwg4gW3LC9C6kZG3LuGM5Cg5k9c",
+    authDomain: "post-data-d9cb1.firebaseapp.com",
+    databaseURL: "https://post-data-d9cb1-default-rtdb.firebaseio.com",
+    projectId: "post-data-d9cb1",
+    storageBucket: "post-data-d9cb1.firebasestorage.app",
+    messagingSenderId: "779038137180",
+    appId: "1:779038137180:web:e25f9575e09b8bf7eabf99",
+    measurementId: "G-X98TZ3L9SZ"
+  };
+  
+  // Inicializar
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+</script>
+
+<!-- 4. Tu script principal (debe ir DESPUÉS de Firebase) -->
+<script src="script.js"></script>
 </body>
 
 </html>

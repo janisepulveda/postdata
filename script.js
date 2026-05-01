@@ -1,9 +1,9 @@
 /* ============================================
-   QUEMANDO CICLOS — script.js v6
-   MD3 · Memoria · Share · Mobile FAB
+   POSTDATA — script.js v7 (CLOUD EDITION)
+   MD3 · Firebase Realtime · Global Sync
    ============================================ */
 
-/* ══ COLORES PASTEL ══ */
+/* ══ CONFIGURACIÓN Y ESTADO ══ */
 const COLORS = [
   { bg: '#F8BBD0', text: '#4A1535', label: 'Rosa pálido' },
   { bg: '#FFCCBC', text: '#4E1900', label: 'Terracota claro' },
@@ -23,7 +23,6 @@ const COLORS = [
   { bg: '#F3E5F5', text: '#2E0040', label: 'Malva' },
 ];
 
-/* ══ TIPOGRAFÍAS ══ */
 const FONTS = [
   { label: 'Playfair Display', value: "'Playfair Display', Georgia, serif" },
   { label: 'Lora', value: "'Lora', Georgia, serif" },
@@ -43,54 +42,45 @@ const TAG_COLORS = {
   Laboral: '#90CAF9', Estudios: '#CE93D8', Transporte: '#FFCC80', Otros: '#B0BEC5',
 };
 
-/* ══ MODERACIÓN ══ */
 const BANNED = ['idiota', 'imbécil', 'imbecil', 'estúpido', 'estupido', 'mierda', 'puta', 'puto', 'culiao', 'pendejo', 'hdp'];
 const AGGRESSION = ['te odio', 'te maldigo', 'eres lo peor', 'inútil', 'basura', 'asco de persona', 'ojalá te mueras', ...BANNED];
 const CRISIS = ['suicidio', 'suicidarme', 'matarme', 'no quiero vivir', 'quiero morir', 'quitarme la vida'];
 
-/* ══ ESTADO ══ */
 let state = {
   posts: [],
-  newPost: { text: '', tag: 'Otros', font: FONTS[0].value, color: COLORS[2], likes: 0, isLiked: false },
+  newPost: { text: '', tag: 'Otros', font: FONTS[0].value, color: COLORS[2] },
   currentPage: 'inicio',
   currentModalId: null,
   activeFilter: null,
   publishBlocked: false,
 };
 
-const SEED = [
-  { text: 'Tres años esperando que cambiara. No cambió. Yo sí.', tag: 'Amor', ci: 0, fi: 0, likes: 47 },
-  { text: 'El trabajo que me quitó el sueño ya no merece mis noches.', tag: 'Laboral', ci: 4, fi: 2, likes: 23 },
-  { text: 'Mi gata naranja murió en mis brazos. Nunca lloré tan limpio.', tag: 'Mascotas', ci: 14, fi: 0, likes: 203 }
-];
+/* ══ FIREBASE SYNC (Nube) ══ */
 
-/* ══ LOCAL STORAGE ══ */
-function saveToLocalStorage() {
-  localStorage.setItem('quemando_ciclos_data', JSON.stringify(state.posts));
-}
-
-function loadFromLocalStorage() {
-  const saved = localStorage.getItem('quemando_ciclos_data');
-  if (saved) state.posts = JSON.parse(saved);
+function initFirebaseSync() {
+  // Escuchar la base de datos en tiempo real
+  database.ref('posts').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      // Convertir objeto en Array y ordenar por los más nuevos
+      state.posts = Object.keys(data).map(key => ({
+        ...data[key],
+        id: key
+      })).reverse();
+    } else {
+      state.posts = [];
+    }
+    renderPosts();
+  });
 }
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', () => {
-  loadFromLocalStorage();
-
-  if (state.posts.length === 0) {
-    state.posts = SEED.map((s, i) => ({
-      id: Date.now() + i, text: s.text, tag: s.tag,
-      font: FONTS[s.fi].value, color: COLORS[s.ci],
-      likes: s.likes, isLiked: false, reports: 0, hidden: false, isCrisis: false,
-    }));
-  }
-
+  initFirebaseSync();
   buildFontSelect();
   renderFilterMenu();
   renderTags();
   renderColors();
-  renderPosts();
   updatePreview();
 
   document.getElementById('fontSelect').addEventListener('change', e => {
@@ -100,123 +90,149 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-/* ══ SHARE SYSTEM ══ */
-async function sharePost(id) {
-  const post = state.posts.find(p => p.id === id);
-  if (!post) return;
-  const shareData = { title: 'Quemando Ciclos', text: `"${post.text}"`, url: window.location.href };
-  try {
-    if (navigator.share) await navigator.share(shareData);
-    else {
-      await navigator.clipboard.writeText(`${shareData.text} - Enviado desde Quemando Ciclos`);
-      showToast('Cierre copiado al portapapeles');
-    }
-  } catch (err) { console.log(err); }
+/* ══ ACCIONES CLOUD ══ */
+
+function publishPost() {
+  const text = state.newPost.text.trim();
+  if (state.publishBlocked || !text) return showToast('Revisa tu mensaje');
+
+  const { isCrisis } = checkText(text);
+
+  const postToUpload = {
+    text: text,
+    tag: state.newPost.tag,
+    font: state.newPost.font,
+    color: state.newPost.color,
+    likes: 0,
+    reports: 0,
+    hidden: false,
+    isCrisis: isCrisis,
+    timestamp: Date.now()
+  };
+
+  // Subir a la nube
+  database.ref('posts').push(postToUpload)
+    .then(() => {
+      showToast('Postdata enviada al muro global');
+      // Reset
+      state.newPost.text = '';
+      document.getElementById('postText').value = '';
+      showPage('inicio');
+    })
+    .catch(() => showToast('Error de conexión'));
 }
 
-function handleSharePreview() {
-  const text = state.newPost.text.trim();
-  if (!text) return showToast('Escribe algo primero');
-  if (navigator.share) navigator.share({ title: 'Mi cierre', text: `"${text}"` });
-  else {
-    navigator.clipboard.writeText(text);
-    showToast('Texto copiado');
-  }
+function handleGridLike(e, id) {
+  e.stopPropagation();
+  const p = state.posts.find(p => p.id === id);
+  if (!p) return;
+
+  // Actualizar likes en la nube
+  database.ref('posts/' + id).update({
+    likes: (p.likes || 0) + 1
+  });
+  showToast('♥');
+}
+
+function cardReport(e, id) {
+  e.stopPropagation();
+  const p = state.posts.find(p => p.id === id);
+  if (!p) return;
+
+  const newReports = (p.reports || 0) + 1;
+  database.ref('posts/' + id).update({
+    reports: newReports,
+    hidden: newReports >= 3 ? true : false
+  });
+  showToast('Reporte enviado');
 }
 
 /* ══ RENDER POSTS ══ */
 function renderPosts() {
   const grid = document.getElementById('postsGrid');
   const empty = document.getElementById('emptyState');
+  
   let visible = state.posts.filter(p => !p.hidden);
   if (state.activeFilter) visible = visible.filter(p => p.tag === state.activeFilter);
-  if (!visible.length) { grid.innerHTML = ''; empty.style.display = 'flex'; return; }
+  
+  if (!visible.length) { 
+    grid.innerHTML = ''; 
+    empty.style.display = 'flex'; 
+    return; 
+  }
+  
   empty.style.display = 'none';
 
   grid.innerHTML = visible.map(post => `
-    <div class="post-card" style="background:${post.color.bg};color:${post.color.text}" onclick="openModal(${post.id})">
-      <button class="post-card__report" onclick="cardReport(event,${post.id})"><span class="material-symbols-outlined">flag</span></button>
+    <div class="post-card" style="background:${post.color.bg};color:${post.color.text}" onclick="openModal('${post.id}')">
+      <button class="post-card__report" onclick="cardReport(event,'${post.id}')"><span class="material-symbols-outlined">flag</span></button>
       <div class="post-card__text" style="font-family:${post.font}">${escHtml(post.text)}</div>
       <div class="post-card__footer">
-        <button class="grid-like-container" onclick="handleGridLike(event,${post.id})" style="color:${post.color.text}">
-          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' ${post.isLiked ? 1 : 0}">favorite</span>
-          <span>${post.likes}</span>
+        <button class="grid-like-container" onclick="handleGridLike(event,'${post.id}')" style="color:${post.color.text}">
+          <span class="material-symbols-outlined">favorite</span>
+          <span>${post.likes || 0}</span>
         </button>
         <div class="post-card__hashtag">#${post.tag.toUpperCase()}</div>
-        <div style="text-align:right;opacity:.4;cursor:pointer" onclick="event.stopPropagation();sharePost(${post.id})">
+        <div style="text-align:right;opacity:.4;cursor:pointer" onclick="event.stopPropagation();sharePost('${post.id}')">
           <span class="material-symbols-outlined" style="font-size:14px">ios_share</span>
         </div>
       </div>
     </div>`).join('');
 }
 
-function handleGridLike(e, id) {
-  e.stopPropagation();
-  const p = state.posts.find(p => p.id === id); if (!p) return;
-  p.isLiked = !p.isLiked; p.likes += p.isLiked ? 1 : -1;
-  saveToLocalStorage();
-  renderPosts();
-  showToast(p.isLiked ? 'Guardado ♥' : 'Like retirado');
+/* ══ UI & NAV ══ */
+
+async function sharePost(id) {
+  const post = state.posts.find(p => p.id === id);
+  if (!post) return;
+  const shareData = { title: 'Postdata', text: `"${post.text}"`, url: window.location.href };
+  try {
+    if (navigator.share) await navigator.share(shareData);
+    else {
+      await navigator.clipboard.writeText(`${post.text} - Visto en Postdata`);
+      showToast('Copiado al portapapeles');
+    }
+  } catch (err) { console.log(err); }
 }
 
-function cardReport(e, id) {
-  e.stopPropagation();
-  const p = state.posts.find(p => p.id === id); if (!p) return;
-  p.reports = (p.reports || 0) + 1;
-  if (p.reports >= 3) p.hidden = true;
-  saveToLocalStorage();
-  renderPosts();
-  showToast('Reporte enviado');
-}
-
-function publishPost() {
-  if (state.publishBlocked || !state.newPost.text.trim()) return showToast('Revisa tu mensaje');
-  const { isCrisis } = checkText(state.newPost.text);
-  const post = { ...state.newPost, id: Date.now(), isCrisis, reports: 0, hidden: false };
-  state.posts.unshift(post);
-  saveToLocalStorage();
-
-  // Reset
-  state.newPost = { text: '', tag: 'Otros', font: FONTS[0].value, color: COLORS[2], likes: 0, isLiked: false };
-  document.getElementById('postText').value = '';
-  showToast('Publicación creada');
-  setTimeout(() => showPage('inicio'), 500);
-  renderPosts();
-}
-
-function handleLike(e) {
-  e.stopPropagation();
-  const p = state.posts.find(p => p.id === state.currentModalId); if (!p) return;
-  p.isLiked = !p.isLiked; p.likes += p.isLiked ? 1 : -1;
-  document.getElementById('modalLikeCount').textContent = p.likes;
-  document.querySelector('#modalLikeBtn .material-symbols-outlined').style.fontVariationSettings = `'FILL' ${p.isLiked ? 1 : 0}`;
-  saveToLocalStorage();
-  renderPosts();
-}
-
-/* ══ NAV ══ */
 function showPage(id, navEl) {
   state.currentPage = id;
   const publishBtn = document.querySelector('.nav__cta');
-
-  // Ocultar botón si ya estamos en publicar
   if (publishBtn) publishBtn.style.display = (id === 'publicar') ? 'none' : 'flex';
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('page--active'));
   document.getElementById('page-' + id).classList.add('page--active');
+  
   document.querySelectorAll('.nav__link').forEach(l => l.classList.remove('nav__link--active'));
   if (navEl) navEl.classList.add('nav__link--active');
   window.scrollTo(0, 0);
 }
 
-/* ══ UTILS GENÉRICOS (Mantener del código anterior) ══ */
+function openModal(id) {
+  state.currentModalId = id;
+  const p = state.posts.find(p => p.id === id);
+  const overlay = document.getElementById('modalOverlay');
+  const modal = document.getElementById('modal');
+  
+  overlay.style.background = p.color.bg + '99';
+  modal.style.background = p.color.bg;
+  modal.style.color = p.color.text;
+  
+  document.getElementById('modalPost').textContent = p.text;
+  document.getElementById('modalPost').style.fontFamily = p.font;
+  document.getElementById('modalHashtag').textContent = `#${p.tag.toUpperCase()}`;
+  document.getElementById('modalLikeCount').textContent = p.likes || 0;
+  
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+/* ══ UTILS ══ */
 function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function lower(s) { return String(s).toLowerCase(); }
 function checkText(text) {
-  const t = lower(text);
+  const t = text.toLowerCase();
   return {
     isBanned: BANNED.some(w => t.includes(w)),
-    isAggressive: AGGRESSION.some(w => t.includes(w)),
     isCrisis: CRISIS.some(w => t.includes(w))
   };
 }
@@ -229,12 +245,9 @@ function setTag(tag) { state.newPost.tag = tag; renderTags(); updatePreview(); }
 function renderColors() { document.getElementById('colorGrid').innerHTML = COLORS.map(c => `<div class="color-option ${state.newPost.color.bg === c.bg ? 'selected' : ''}" onclick="setColor('${c.bg}')"><div class="color-swatch" style="background:${c.bg}"><span class="material-symbols-outlined" style="color:${c.text}">check</span></div></div>`).join(''); }
 function setColor(hex) { state.newPost.color = COLORS.find(c => c.bg === hex) || COLORS[0]; renderColors(); updatePreview(); }
 function updatePreview() { const preview = document.getElementById('postPreview'); const hashtag = document.getElementById('previewHashtag'); const textarea = document.getElementById('postText'); preview.style.background = state.newPost.color.bg; preview.style.color = state.newPost.color.text; textarea.style.fontFamily = state.newPost.font; hashtag.textContent = `#${state.newPost.tag.toUpperCase()}`; }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2400); }
+function handleTextInput(val) { state.newPost.text = val; updatePreview(); }
 function openTyC() { document.getElementById('tycOverlay').classList.add('open'); }
 function closeTyC() { document.getElementById('tycOverlay').classList.remove('open'); }
 function acceptTyC() { closeTyC(); showPage('publicar'); }
-function openModal(id) { state.currentModalId = id; const p = state.posts.find(p => p.id === id); const overlay = document.getElementById('modalOverlay'); const modal = document.getElementById('modal'); overlay.style.background = p.color.bg + '99'; modal.style.background = p.color.bg; modal.style.color = p.color.text; document.getElementById('modalPost').textContent = p.text; document.getElementById('modalPost').style.fontFamily = p.font; document.getElementById('modalHashtag').textContent = `#${p.tag.toUpperCase()}`; document.getElementById('modalLikeCount').textContent = p.likes; document.querySelector('#modalLikeBtn .material-symbols-outlined').style.fontVariationSettings = `'FILL' ${p.isLiked ? 1 : 0}`; overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow = ''; }
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2400); }
-function navigationHandler(e) { e.preventDefault(); showPage(e.target.getAttribute('data-page'), e.target); }
-function syncScroll(ta) { const hl = document.getElementById('previewHighlight'); if (hl) hl.scrollTop = ta.scrollTop; }
-function handleTextInput(val) { state.newPost.text = val; updatePreview(); syncScroll(document.getElementById('postText')); }
