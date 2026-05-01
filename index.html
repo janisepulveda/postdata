@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 
 <head>
@@ -7,7 +7,7 @@
   <title>Postdata</title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/favicon.jpeg">
+  <link rel="icon" type="image/png" href="assets/favicon.jpeg" />
 
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,7 +26,6 @@
 </head>
 
 <body>
-
   <!-- NAVEGACIÓN -->
   <nav class="nav">
     <div class="nav__container">
@@ -35,14 +34,20 @@
       </button>
 
       <a href="#" class="nav__logo-container" onclick="navigationHandler(event)" data-page="inicio">
-        <img src="assets/logo.jpeg" alt="Postdata Logo" class="nav__logo">
+        <img src="assets/logo.jpeg" alt="Postdata Logo" class="nav__logo" />
       </a>
 
       <ul class="nav__links">
-        <li><a href="#" class="nav__link nav__link--active" data-page="inicio"
-            onclick="navigationHandler(event)">Inicio</a></li>
-        <li><a href="#" class="nav__link" data-page="terminos" onclick="navigationHandler(event)">Términos</a></li>
-        <li><a href="#" class="nav__link" data-page="nosotros" onclick="navigationHandler(event)">Nosotros</a></li>
+        <li>
+          <a href="#" class="nav__link nav__link--active" data-page="inicio"
+            onclick="navigationHandler(event)">Inicio</a>
+        </li>
+        <li>
+          <a href="#" class="nav__link" data-page="terminos" onclick="navigationHandler(event)">Términos</a>
+        </li>
+        <li>
+          <a href="#" class="nav__link" data-page="nosotros" onclick="navigationHandler(event)">Nosotros</a>
+        </li>
       </ul>
 
       <button class="nav__cta md-filled-btn" onclick="openTyC()">
@@ -68,10 +73,10 @@
   <main id="page-inicio" class="page page--active">
     <header class="page-header">
       <h1 class="page-title">Publicaciones recientes</h1>
-      <span class="filter-active-badge" id="filterBadge" style="display:none"></span>
+      <span class="filter-active-badge" id="filterBadge" style="display: none"></span>
     </header>
     <div class="posts-grid" id="postsGrid"></div>
-    <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-state" id="emptyState" style="display: none">
       <span class="material-symbols-outlined">notes</span>
       <p>No hay publicaciones en esta categoría aún.</p>
     </div>
@@ -83,16 +88,22 @@
       <h1 class="page-title">Personaliza tu publicación</h1>
     </header>
 
-    <div id="aggressionWarning" class="content-warning" style="display:none; margin-bottom: 20px;">
+    <div id="aggressionWarning" class="content-warning" style="display: none; margin-bottom: 20px">
       <span class="material-symbols-outlined">warning</span>
-      <p>Tu mensaje contiene palabras que podrían ser ofensivas. Por favor, mantén el respeto.</p>
+      <p>
+        Tu mensaje contiene palabras que podrían ser ofensivas. Por favor,
+        mantén el respeto.
+      </p>
     </div>
 
-    <div id="crisisBanner" class="crisis-banner" style="display:none; margin-bottom: 20px;">
+    <div id="crisisBanner" class="crisis-banner" style="display: none; margin-bottom: 20px">
       <span class="material-symbols-outlined crisis-banner_icon">volunteer_activism</span>
       <div class="crisis-banner_body">
         <strong>No estás solo/a</strong>
-        <p>Si estás pasando por un momento difícil, hay personas que quieren escucharte.</p>
+        <p>
+          Si estás pasando por un momento difícil, hay personas que quieren
+          escucharte.
+        </p>
         <div class="crisis-links">
           <a href="tel:4141" class="crisis-link crisis-link--primary">Llamar al 4141</a>
           <a href="https://todomejora.org" target="_blank" class="crisis-link">Todo Mejora</a>
@@ -102,23 +113,18 @@
 
     <div class="publish-layout">
       <div class="preview-panel">
+        <!-- ══ REEMPLAZAR el bloque .post-preview en page-publicar ══ -->
+
         <div class="post-preview" id="postPreview">
           <div class="post-preview__inner">
             <textarea class="post-textarea-inline" id="postText" placeholder="Escribe tu cierre aquí..." maxlength="500"
               oninput="handleTextInput(this.value)"></textarea>
           </div>
-          <div class="post-preview__footer-preview">
-            <button class="preview-like-btn" onclick="handlePreviewLike(event)">
-              <span class="material-symbols-outlined">favorite</span>
-              <span>0</span>
-            </button>
-            <div id="previewHashtag" class="preview-hashtag">#OTROS</div>
-            <div class="preview-share">
-              <span class="material-symbols-outlined">ios_share</span>
-            </div>
+          <!-- contador DENTRO del post-it, esquina inferior derecha -->
+          <div class="char-counter" id="charCounterWrapper">
+            <span id="charCount">0</span> / 500
           </div>
         </div>
-        <div class="char-counter"><span id="charCount">0</span> / 500</div>
       </div>
 
       <div class="controls-panel">
@@ -136,9 +142,12 @@
         </div>
         <div class="publish-actions">
           <button class="publish-btn md-filled-btn" onclick="publishPost()">
-            <span class="material-symbols-outlined">local_fire_department</span> Publicar
+            <span class="material-symbols-outlined">local_fire_department</span>
+            Publicar
           </button>
-          <button class="cancel-btn md-outlined-btn" onclick="showPage('inicio')">Cancelar</button>
+          <button class="cancel-btn md-outlined-btn" onclick="showPage('inicio')">
+            Cancelar
+          </button>
         </div>
       </div>
     </div>
@@ -150,10 +159,19 @@
       <h1 class="page-title">Términos y Condiciones</h1>
     </header>
     <div class="static-content">
-      <p>Este es un espacio anónimo para cerrar ciclos. Toda publicación es responsabilidad de quien la emite.</p>
-      <p>No se toleran contenidos que promuevan violencia, discriminación o acoso. Al publicar, aceptas que el contenido
-        es de uso público y puede ser moderado por la comunidad.</p>
-      <p>Si un mensaje recibe múltiples reportes, será ocultado automáticamente para proteger el espacio.</p>
+      <p>
+        Este es un espacio anónimo para cerrar ciclos. Toda publicación es
+        responsabilidad de quien la emite.
+      </p>
+      <p>
+        No se toleran contenidos que promuevan violencia, discriminación o
+        acoso. Al publicar, aceptas que el contenido es de uso público y puede
+        ser moderado por la comunidad.
+      </p>
+      <p>
+        Si un mensaje recibe múltiples reportes, será ocultado automáticamente
+        para proteger el espacio.
+      </p>
     </div>
   </main>
 
@@ -163,10 +181,16 @@
       <h1 class="page-title">Nosotros</h1>
     </header>
     <div class="static-content">
-      <p><strong>Postdata</strong> es un tablero colectivo de cierres. Un espacio diseñado para dejar ir aquello que ya
-        no necesitamos cargar — amor, trabajo, amistad o rutinas.</p>
-      <p>Creemos que el diseño y la tecnología pueden ser herramientas de contención emocional. A veces, escribir un
-        sentimiento es el primer paso para soltarlo.</p>
+      <p>
+        <strong>Postdata</strong> es un tablero colectivo de cierres. Un
+        espacio diseñado para dejar ir aquello que ya no necesitamos cargar —
+        amor, trabajo, amistad o rutinas.
+      </p>
+      <p>
+        Creemos que el diseño y la tecnología pueden ser herramientas de
+        contención emocional. A veces, escribir un sentimiento es el primer
+        paso para soltarlo.
+      </p>
     </div>
   </main>
 
@@ -176,15 +200,15 @@
       <button class="modal__close" onclick="closeModal()">
         <span class="material-symbols-outlined">close</span>
       </button>
- 
+
       <div class="modal__post" id="modalPost"></div>
       <div class="modal__hashtag" id="modalHashtag"></div>
- 
-      <div id="modalSupport" class="modal__support" style="display:none">
+
+      <div id="modalSupport" class="modal__support" style="display: none">
         <span class="material-symbols-outlined">volunteer_activism</span>
         <div>Si necesitas apoyo, llama al <a href="tel:4141">4141</a>.</div>
       </div>
- 
+
       <!-- Footer igual que las cards: like · (centro vacío) · share -->
       <div class="modal__footer">
         <button class="modal__action" id="modalLikeBtn" onclick="handleLike(event)">
@@ -198,70 +222,81 @@
       </div>
     </div>
   </div>
-      <!-- MODAL TyC (Restaurado fielmente) -->
-      <div class="modal-overlay tyc-overlay" id="tycOverlay" onclick="closeTyC()">
-        <div class="tyc-modal" onclick="event.stopPropagation()">
-          <h2 class="tyc-modal__title">Antes de publicar tu mensaje</h2>
-          <p class="tyc-modal__subtitle">Este espacio funciona si todos lo cuidamos.</p>
+  <!-- MODAL TyC (Restaurado fielmente) -->
+  <div class="modal-overlay tyc-overlay" id="tycOverlay" onclick="closeTyC()">
+    <div class="tyc-modal" onclick="event.stopPropagation()">
+      <h2 class="tyc-modal__title">Antes de publicar tu mensaje</h2>
+      <p class="tyc-modal__subtitle">
+        Este espacio funciona si todos lo cuidamos.
+      </p>
 
-          <div class="tyc-pledges">
-            <div class="tyc-pledge">
-              <span class="material-symbols-outlined tyc-pledge__icon">handshake</span>
-              <div class="tyc-pledge__content">
-                <strong>Respeto</strong>
-                <p>No nombres a terceros ni los ataques. Habla de tu experiencia.</p>
-              </div>
-            </div>
-
-            <div class="tyc-pledge">
-              <span class="material-symbols-outlined tyc-pledge__icon">favorite</span>
-              <div class="tyc-pledge__content">
-                <strong>Cuidado</strong>
-                <p>Si estás en crisis, <a href="tel:4141" class="tyc-help-link">llama al 4141</a> o visita <a
-                    href="https://todomejora.org" target="_blank" class="tyc-help-link">Todo Mejora</a>.</p>
-              </div>
-            </div>
-
-            <div class="tyc-pledge">
-              <span class="material-symbols-outlined tyc-pledge__icon">local_fire_department</span>
-              <div class="tyc-pledge__content">
-                <strong>Desapego</strong>
-                <p>Al publicar, dejas ir tu mensaje. Es un acto de cierre, no de venganza.</p>
-              </div>
-            </div>
+      <div class="tyc-pledges">
+        <div class="tyc-pledge">
+          <span class="material-symbols-outlined tyc-pledge__icon">handshake</span>
+          <div class="tyc-pledge__content">
+            <strong>Respeto</strong>
+            <p>
+              No nombres a terceros ni los ataques. Habla de tu experiencia.
+            </p>
           </div>
+        </div>
 
-          <button class="tyc-accept-btn md-filled-btn" onclick="acceptTyC()">
-            Acepto — quiero publicar este mensaje
-          </button>
-          <button class="tyc-cancel-btn md-outlined-btn" onclick="closeTyC()">
-            Cancelar
-          </button>
+        <div class="tyc-pledge">
+          <span class="material-symbols-outlined tyc-pledge__icon">favorite</span>
+          <div class="tyc-pledge__content">
+            <strong>Cuidado</strong>
+            <p>
+              Si estás en crisis,
+              <a href="tel:4141" class="tyc-help-link">llama al 4141</a> o
+              visita
+              <a href="https://todomejora.org" target="_blank" class="tyc-help-link">Todo Mejora</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="tyc-pledge">
+          <span class="material-symbols-outlined tyc-pledge__icon">local_fire_department</span>
+          <div class="tyc-pledge__content">
+            <strong>Desapego</strong>
+            <p>
+              Al publicar, dejas ir tu mensaje. Es un acto de cierre, no de
+              venganza.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div class="toast" id="toast"></div>
+      <button class="tyc-accept-btn md-filled-btn" onclick="acceptTyC()">
+        Acepto — quiero publicar este mensaje
+      </button>
+      <button class="tyc-cancel-btn md-outlined-btn" onclick="closeTyC()">
+        Cancelar
+      </button>
+    </div>
+  </div>
 
-      <!-- SCRIPTS -->
-      <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-      <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+  <div class="toast" id="toast"></div>
 
-      <script>
-        // Configuración Firebase (Se asume correcta según mensajes previos)
-        const firebaseConfig = {
-          apiKey: "AIzaSyDFnR0IDwg4gW3LC9C6kZG3LuGM5Cg5k9c",
-          authDomain: "post-data-d9cb1.firebaseapp.com",
-          databaseURL: "https://post-data-d9cb1-default-rtdb.firebaseio.com",
-          projectId: "post-data-d9cb1",
-          storageBucket: "post-data-d9cb1.firebasestorage.app",
-          messagingSenderId: "779038137180",
-          appId: "1:779038137180:web:e25f9575e09b8bf7eabf99"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-      </script>
+  <!-- SCRIPTS -->
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
-      <script src="script.js"></script>
+  <script>
+    // Configuración Firebase (Se asume correcta según mensajes previos)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFnR0IDwg4gW3LC9C6kZG3LuGM5Cg5k9c",
+      authDomain: "post-data-d9cb1.firebaseapp.com",
+      databaseURL: "https://post-data-d9cb1-default-rtdb.firebaseio.com",
+      projectId: "post-data-d9cb1",
+      storageBucket: "post-data-d9cb1.firebasestorage.app",
+      messagingSenderId: "779038137180",
+      appId: "1:779038137180:web:e25f9575e09b8bf7eabf99",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
+
+  <script src="script.js"></script>
 </body>
 
 </html>

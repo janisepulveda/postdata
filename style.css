@@ -635,6 +635,8 @@ body {
     box-shadow: var(--note-shadow-hover);
     transition: background .2s, color .2s;
     overflow: visible;
+    max-width: 700px;
+    max-height: 90vh;
 }
 
 .post-preview::before {
@@ -1076,8 +1078,11 @@ body {
     /* background se setea inline: post.color.bg + '55' */
     backdrop-filter: blur(12px);
 }
-.modal-overlay.open { display: flex; }
- 
+
+.modal-overlay.open {
+    display: flex;
+}
+
 /* El post-it en sí */
 .modal {
     width: 90%;
@@ -1090,10 +1095,10 @@ body {
     flex-direction: column;
     justify-content: space-between;
     /* background y color se setean inline desde JS */
-    box-shadow: 4px 4px 0 rgba(0,0,0,.12), 0 20px 60px rgba(0,0,0,.20);
-    animation: modalDrop .22s cubic-bezier(.2,0,0,1) both;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, .12), 0 20px 60px rgba(0, 0, 0, .20);
+    animation: modalDrop .22s cubic-bezier(.2, 0, 0, 1) both;
 }
- 
+
 /* cinta adhesiva */
 .modal::before {
     content: '';
@@ -1103,28 +1108,50 @@ body {
     transform: translateX(-50%);
     width: 52px;
     height: 22px;
-    background: rgba(255,255,255,.5);
-    border: 1px solid rgba(0,0,0,.07);
+    background: rgba(255, 255, 255, .5);
+    border: 1px solid rgba(0, 0, 0, .07);
 }
- 
+
 @keyframes modalDrop {
-    from { opacity: 0; transform: translateY(14px) scale(.95); }
-    to   { opacity: 1; transform: translateY(0)   scale(1);   }
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
- 
+
 /* botón cerrar */
 .modal__close {
     position: absolute;
-    top: 12px; right: 12px;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    background: none; border: none; cursor: pointer;
-    color: inherit; opacity: .35; border-radius: var(--r-full);
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: .35;
+    border-radius: var(--r-full);
     transition: opacity .13s, background .13s;
 }
-.modal__close:hover { opacity: .8; background: rgba(0,0,0,.08); }
-.modal__close .material-symbols-outlined { font-size: 18px; }
- 
+
+.modal__close:hover {
+    opacity: .8;
+    background: rgba(0, 0, 0, .08);
+}
+
+.modal__close .material-symbols-outlined {
+    font-size: 18px;
+}
+
 /* texto del post — grande y centrado */
 .modal__post {
     flex: 1;
@@ -1137,7 +1164,7 @@ body {
     padding: 8px 0;
     /* font-family se setea inline desde JS */
 }
- 
+
 /* hashtag */
 .modal__hashtag {
     text-align: center;
@@ -1148,11 +1175,11 @@ body {
     opacity: .45;
     margin-bottom: 16px;
 }
- 
+
 /* recursos de crisis */
 .modal__support {
-    background: rgba(255,255,255,.3);
-    border: 1px solid rgba(0,0,0,.09);
+    background: rgba(255, 255, 255, .3);
+    border: 1px solid rgba(0, 0, 0, .09);
     border-radius: var(--r-sm);
     padding: 9px 12px;
     margin-bottom: 12px;
@@ -1162,47 +1189,85 @@ body {
     font-size: 11px;
     font-weight: 500;
 }
-.modal__support .material-symbols-outlined { color: var(--calm); font-size: 15px; flex-shrink: 0; }
-.modal__support a { color: var(--calm); font-weight: 600; }
- 
+
+.modal__support .material-symbols-outlined {
+    color: var(--calm);
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.modal__support a {
+    color: var(--calm);
+    font-weight: 600;
+}
+
 /* footer: igual que las cards — like · share */
 .modal__footer {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    border-top: 1px solid rgba(0,0,0,.12);
+    border-top: 1px solid rgba(0, 0, 0, .12);
     padding-top: 14px;
     font-size: 11px;
 }
- 
+
 .modal__action {
-    background: none; border: none; cursor: pointer;
-    font-family: var(--ui); font-size: 11px; font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--ui);
+    font-size: 11px;
+    font-weight: 500;
     color: inherit;
-    display: flex; align-items: center; gap: 4px;
-    opacity: .6; transition: opacity .13s, transform .12s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: .6;
+    transition: opacity .13s, transform .12s;
     padding: 4px;
 }
-.modal__action:hover { opacity: 1; }
-.modal__action:active { transform: scale(1.18); }
-.modal__action .material-symbols-outlined { font-size: 15px; }
- 
+
+.modal__action:hover {
+    opacity: 1;
+}
+
+.modal__action:active {
+    transform: scale(1.18);
+}
+
+.modal__action .material-symbols-outlined {
+    font-size: 15px;
+}
+
 /* like a la izquierda */
-#modalLikeBtn { justify-content: flex-start; }
- 
+#modalLikeBtn {
+    justify-content: flex-start;
+}
+
 /* share a la derecha */
-.modal__share { justify-content: flex-end; }
- 
+.modal__share {
+    justify-content: flex-end;
+}
+
 /* reportar — oculto en el centro, solo visible en hover del modal */
 .modal__report {
     justify-content: flex-end;
     opacity: 0;
 }
-.modal:hover .modal__report { opacity: .3; }
-.modal__report:hover { opacity: .7 !important; color: var(--error); }
- 
 
-.modal__action .material-symbols-outlined { font-size: 16px; }
+.modal:hover .modal__report {
+    opacity: .3;
+}
+
+.modal__report:hover {
+    opacity: .7 !important;
+    color: var(--error);
+}
+
+
+.modal__action .material-symbols-outlined {
+    font-size: 16px;
+}
 
 /* ══ TyC MODAL ══ */
 .tyc-overlay {
@@ -1403,4 +1468,30 @@ body {
     .nav__cta .btn-text {
         display: inline;
     }
+}
+
+/* ══ AGREGAR al final de style.css ══ */
+
+/* Ocultar el footer (like/hashtag/share) solo en la pantalla de publicar */
+#page-publicar .post-preview__footer-preview {
+    display: none;
+}
+
+/* Contador de caracteres — dentro del post-it, esquina inferior derecha */
+#page-publicar .char-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    font-size: 11px;
+    font-weight: 500;
+    color: inherit;
+    opacity: .45;
+    letter-spacing: .02em;
+    pointer-events: none;
+}
+
+#page-publicar .char-counter.over {
+    opacity: 1;
+    color: var(--error);
+    font-weight: 700;
 }
