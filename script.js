@@ -176,24 +176,38 @@ async function sharePost(id) {
 /* ══ MODALES ══ */
 function openModal(id) {
   state.currentModalId = id;
-  const p = state.posts.find(p => p.id === id);
+  const p = state.posts.find(post => post.id === id);
   const overlay = document.getElementById('modalOverlay');
-  const m = document.getElementById('modal');
-  
-  m.style.background = p.color.bg; 
-  m.style.color = p.color.text;
-  document.getElementById('modalPost').textContent = p.text;
+  const modal   = document.getElementById('modal');
+ 
+  // Fondo del overlay = color del post-it con mucha opacidad
+  overlay.style.background = p.color.bg + '88';
+ 
+  // El post-it del modal hereda el color exacto
+  modal.style.background = p.color.bg;
+  modal.style.color       = p.color.text;
+ 
+  // Contenido
+  document.getElementById('modalPost').textContent      = p.text;
   document.getElementById('modalPost').style.fontFamily = p.font;
-  document.getElementById('modalHashtag').textContent = `#${p.tag.toUpperCase()}`;
+  document.getElementById('modalHashtag').textContent   = `#${p.tag.toUpperCase()}`;
   document.getElementById('modalLikeCount').textContent = p.likes || 0;
-  
-  // Mostrar recursos de ayuda si es crisis
+ 
+  // Like: sincronizar estado
+  const likeIcon = document.querySelector('#modalLikeBtn .material-symbols-outlined');
+  if (likeIcon) likeIcon.style.fontVariationSettings = `'FILL' ${p.isLiked ? 1 : 0}`;
+ 
+  // Recursos de crisis
   document.getElementById('modalSupport').style.display = p.isCrisis ? 'flex' : 'none';
-  
+ 
   overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+ 
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 function openTyC() { document.getElementById('tycOverlay').classList.add('open'); }
 function closeTyC() { document.getElementById('tycOverlay').classList.remove('open'); }
 function acceptTyC() { closeTyC(); showPage('publicar'); }
